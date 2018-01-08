@@ -1,0 +1,19 @@
+{
+  "name": "liri-node-app",
+  "version": "1.0.0",
+  "description": "Packages for my Liri app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khalidmadih/liri-node-app.git"
+  },
+  "author": "Khalid Madih",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/khalidmadih/liri-node-app/issues"
+  },
+  "homepage": "https://github.com/khalidmadih/liri-node-app#readme"
+}
