@@ -5,7 +5,7 @@ var keys = require("./keys.js");
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var request = require("request");
-
+var twitter = require('simple-twitter');
 // var inquirer = require("inquirer");
 
 //Global varibales used :
@@ -16,8 +16,6 @@ var movieName = "";
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
 
-
-
 //Switch Statement to decide what to do
 switch (wordInput[2]) {
     case "spotify-this-song":
@@ -25,6 +23,12 @@ switch (wordInput[2]) {
         break;
     case "movie-this":
         movieLookup();
+        break;
+    case "do-what-it-says":
+        doAsLiri();
+        break;
+    case "my-tweets":
+        myTweets();
         break;
     default:
         console.log("-----------------------------------------");
@@ -35,7 +39,7 @@ switch (wordInput[2]) {
         console.log('> do-what-it-says: to view the latest tweets');
 }
 
-//Spotify Search function
+//Spotify Song Search function
 
 function songLookup() {
 
@@ -58,9 +62,9 @@ function songLookup() {
         }
 
     });
-
 }
 
+//OMDB Movie Search function
 function movieLookup() {
 
     // And do a little for-loop magic to handle the inclusion of "+"s
@@ -78,6 +82,7 @@ function movieLookup() {
     request(queryUrl, function(error, response, body) {
         // If the request is successful
         if (!error && response.statusCode === 200 && JSON.parse(body).Response == "True") {
+            //Display movie info
             console.log("--------------------");
             console.log("Title: " + JSON.parse(body).Title);
             console.log("Released: " + JSON.parse(body).Released);
@@ -87,17 +92,47 @@ function movieLookup() {
             let Ratings = JSON.parse(body).Ratings;
             for (let i = 0; i < Ratings.length; i++) {
                 if (Ratings[i].Source === "Rotten Tomatoes") {
-                    console.log("Rotten Tomatoes Rating: " + Ratings[i].Value);                
-                } 
-
+                    console.log("Rotten Tomatoes Rating: " + Ratings[i].Value);
+                }
             }
-           	//Displaying the rest of the info
-           	console.log("Country where the movie was produced: " + JSON.parse(body).Country);
+            //Displaying the rest of the info
+            console.log("Country where the movie was produced: " + JSON.parse(body).Country);
             console.log("Language(s): " + JSON.parse(body).Language);
             console.log("Plot: " + JSON.parse(body).Plot);
             console.log("Actors: " + JSON.parse(body).Actors);
         } else {
-        	console.log("Movie not found!...Try another movie title");
+            console.log("Movie not found!...Try another movie title");
+        }
+    });
+}
+
+function doAsLiri() {
+    fs.readFile('random.txt', "utf8", (err, data) => {
+        if (err) throw err;
+        console.log("--------------------");
+        console.log(data);
+    });
+
+}
+
+//Function to get the tweets
+function myTweets() {
+	//Getting the results and handling the errors
+    client.get('statuses/user_timeline', function(error, tweets, response) {
+        if (!error) {
+
+            //Looping throught the resullts
+            for (var i = 0; i < tweets.length; i++) {
+                console.log("------------------------------ " + "\r\n" +
+                    "@" + tweets[i].user.screen_name + ": " +
+                    tweets[i].text + "\r\n" +
+                    tweets[i].created_at + "\r\n"
+                );
+                //breaking out of the loop at the 20th tweet
+                if (i==19){
+                	break;
+                }
+            }
         }
     });
 }
