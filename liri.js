@@ -10,7 +10,7 @@ var twitter = require('simple-twitter');
 
 //Global varibales used :
 var wordInput = process.argv;
-var movieName = "";
+var movieName = wordInput[3];
 
 //Passing keys from local file
 var spotify = new Spotify(keys.spotify);
@@ -54,7 +54,7 @@ function songLookup() {
                 song = wordInput[3];
             }
         }
-    //Replacing the song query by "The Sign" if empty    
+        //Replacing the song query by "The Sign" if empty    
     } else {
         song = "The Sign";
     }
@@ -84,15 +84,19 @@ function songLookup() {
 function movieLookup() {
 
     // loop magic to handle the inclusion of "+"s
-    for (let i = 3; i < wordInput.length; i++) {
-        if (i > 3 && i < wordInput.length) {
-            movieName = movieName + "+" + wordInput[i];
-        } else {
-            movieName += wordInput[i];
+    if (movieName != undefined) {
+        for (let i = 3; i < wordInput.length; i++) {
+            if (i > 3 && i < wordInput.length) {
+                movieName = movieName + "+" + wordInput[i];
+            } else {
+                movieName += wordInput[i];
+            }
         }
+    } else {
+        movieName = "Mr. Nobody";
     }
     // Then run a request to the OMDB API
-    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey="+omdb;
+    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=" + omdb;
     // console.log(queryUrl);
     request(queryUrl, function(error, response, body) {
         // If the request is successful
