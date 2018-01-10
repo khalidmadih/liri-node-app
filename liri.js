@@ -15,6 +15,7 @@ var movieName = "";
 //Passing keys from local file
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
+var omdb = keys.omdb;
 
 //Switch Statement to decide what to do
 switch (wordInput[2]) {
@@ -42,17 +43,33 @@ switch (wordInput[2]) {
 //Spotify Song Search function
 
 function songLookup() {
+    let song = wordInput[3];
+    //Check if Search Song is not empty
+    if (song != undefined) {
+        //Loop thru and build query if more than one word search
+        for (let i = 3; i < wordInput.length; i++) {
+            if (i > 3 && i < wordInput.length) {
+                song = song + " " + wordInput[i];
+            } else {
+                song = wordInput[3];
+            }
+        }
+    //Replacing the song query by "The Sign" if empty    
+    } else {
+        song = "The Sign";
+    }
 
-    spotify.search({ type: 'track', query: wordInput[3], limit: 10 }, function(err, data) {
+    spotify.search({ type: 'track', query: song, limit: 10 }, function(err, data) {
         if (err) {
             return console.log('Error occurred: ' + err);
         }
 
+        //If no results are found
+        if (data.tracks.total == 0) {
+            console.log("Sorry, no results found!..Try another song");
+        }
+
         let TrackSearchResult = data.tracks.items
-
-        // console.log(JSON.stringify(TrackSearchResult, null, 2));
-
-
         for (let i = 0; i < TrackSearchResult.length; i++) {
             console.log("--------------------");
             console.log("Artist: " + JSON.stringify(TrackSearchResult[i].artists[0].name));
@@ -60,14 +77,13 @@ function songLookup() {
             console.log("Preview Link: " + JSON.stringify(TrackSearchResult[i].preview_url));
             console.log("Album: " + JSON.stringify(TrackSearchResult[i].album.name));
         }
-
     });
 }
 
 //OMDB Movie Search function
 function movieLookup() {
 
-    // And do a little for-loop magic to handle the inclusion of "+"s
+    // loop magic to handle the inclusion of "+"s
     for (let i = 3; i < wordInput.length; i++) {
         if (i > 3 && i < wordInput.length) {
             movieName = movieName + "+" + wordInput[i];
@@ -75,10 +91,9 @@ function movieLookup() {
             movieName += wordInput[i];
         }
     }
-    // Then run a request to the OMDB API with the movie specified
-    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
-    // This line is just to help us debug against the actual URL.
-    console.log(queryUrl);
+    // Then run a request to the OMDB API
+    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey="+omdb;
+    // console.log(queryUrl);
     request(queryUrl, function(error, response, body) {
         // If the request is successful
         if (!error && response.statusCode === 200 && JSON.parse(body).Response == "True") {
@@ -117,7 +132,7 @@ function doAsLiri() {
 
 //Function to get the tweets
 function myTweets() {
-	//Getting the results and handling the errors
+    //Getting the results and handling the errors
     client.get('statuses/user_timeline', function(error, tweets, response) {
         if (!error) {
 
@@ -129,8 +144,8 @@ function myTweets() {
                     tweets[i].created_at + "\r\n"
                 );
                 //breaking out of the loop at the 20th tweet
-                if (i==19){
-                	break;
+                if (i == 19) {
+                    break;
                 }
             }
         }
