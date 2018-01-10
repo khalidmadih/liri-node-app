@@ -6,6 +6,7 @@ var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var request = require("request");
 var twitter = require('simple-twitter');
+var moment = require("moment");
 // var inquirer = require("inquirer");
 
 //Global varibales used :
@@ -94,6 +95,7 @@ function movieLookup() {
         }
     } else {
         movieName = "Mr. Nobody";
+        console.log("You didn't provide a movie title, so we searched for 'Mr. Nobody'. Enjoy!")
     }
     // Then run a request to the OMDB API
     var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=" + omdb;
@@ -131,7 +133,6 @@ function doAsLiri() {
         console.log("--------------------");
         console.log(data);
     });
-
 }
 
 //Function to get the tweets
@@ -145,7 +146,7 @@ function myTweets() {
                 console.log("------------------------------ " + "\r\n" +
                     "@" + tweets[i].user.screen_name + ": " +
                     tweets[i].text + "\r\n" +
-                    tweets[i].created_at + "\r\n"
+                    moment(tweets[i].created_at).format('LLL') + "\r\n"
                 );
                 //breaking out of the loop at the 20th tweet
                 if (i == 19) {
