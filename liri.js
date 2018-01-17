@@ -5,9 +5,7 @@ var keys = require("./keys.js");
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var request = require("request");
-var twitter = require('simple-twitter');
 var moment = require("moment");
-// var inquirer = require("inquirer");
 
 //Global varibales used :
 var wordInput = process.argv;
@@ -146,7 +144,8 @@ function myTweets() {
                 console.log("------------------------------ " + "\r\n" +
                     "@" + tweets[i].user.screen_name + ": " +
                     tweets[i].text + "\r\n" +
-                    moment(tweets[i].created_at).format('LLL') + "\r\n"
+                    //moment(tweets[i].created_at).format('LLL') + "\r\n"
+                    tweets[i].created_at + "\r\n"
                 );
                 //breaking out of the loop at the 20th tweet
                 if (i == 19) {
